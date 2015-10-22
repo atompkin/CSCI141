@@ -65,6 +65,7 @@ public class View extends JFrame
 		 myNames.add(myName2);
 	     
 		 myBottom = new Panel();
+		 myReset.setPreferredSize(new Dimension(100, 100));
 		 myBottom.add(myReset);
 		 myBottom.add(myLabel);
 	     mySquareListener = new ButtonListener[6][7];
@@ -93,14 +94,19 @@ public class View extends JFrame
 		setVisible(true);
 	}
 	
-	public void setPlayer1Name(String n)
+	public void setPlayer1Name(String n, int score)
 	{
-		myName1 = new JLabel(n+ ": ");
+		myName1.setText(n+ ": " + score);
 	}
 	
-	public void setPlayer2Name(String n)
+	public void setPlayer2Name(String n,int score)
 	{
-		myName2 = new JLabel(n+":");
+		myName2.setText(n+ ": " + score);
+	}
+	
+	public void setMessage(String line1,String line2,String line3)
+	{
+		myLabel.setText(line1+ "/n"+line2+"/n"+line3);
 	}
 	
 	public void addViewListener(ActionListener listenForInput)
