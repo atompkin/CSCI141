@@ -2,21 +2,33 @@ package controllerandview;
 
 import javax.swing.*;
 
+
 import connectmodel.PieceType;
 
 import java.awt.*;
 import java.lang.reflect.Method;
 
+/** 
+ * View is the Gui. The Gui Includes Player 1 and 2 wins as well as the total number of ties. 
+ * Board is contructed of a 2D array of JLabels.
+ * The bottom of the board has a Reset button which is only active if the game has ended aswell
+ * as a text box to display feed back to the user.
+ * 
+ * 
+ * @author Andrew Tompkins
+ * @Due 10/22/15
+ * @version 1.0.3
+ */
 public class View extends JFrame
 {
 	private int rows = 6;
 	private int cols = 7;
     private Panel myNames;
     private Panel myBottom;
-	private JLabel myName1 = new JLabel("Player1: ");
-	private JLabel myTies = new JLabel("Ties: ");
-	private JLabel myName2 = new JLabel("Player2: ");
-	private JLabel myLabel = new JLabel("Test");
+	private JLabel myName1 = new JLabel("Player1: 0");
+	private JLabel myTies = new JLabel("Ties: 0");
+	private JLabel myName2 = new JLabel("Player2: 0");
+	private JLabel myLabel = new JLabel("The Game has started");
 	private JButton myReset = new JButton("Reset");
 	private ImageIcon my1Image;
 	private ImageIcon my2Image;
@@ -25,6 +37,10 @@ public class View extends JFrame
 	private JLabel[][] mySquare;
 	private ButtonListener mySquareListener[][];
 	
+	/** Constructor For the view creates all the panels and buttons
+	 * 
+	 * @param controller
+	 */
 	public View(Controller controller)
 	{
 		this.setSize(600,600);
@@ -132,27 +148,60 @@ public class View extends JFrame
         	}
         }
 	}
+	/**
+	 *  sets the name of the 1st player and the players number of wins at the top of screen
+	 * 
+	 * @param n
+	 * @param score
+	 */
 	
 	public void setPlayer1Name(String n, int score)
 	{
 		myName1.setText(n+ ": " + score);
 	}
+	/**
+	 * sets the name of the 2nd player and the players number of wins at the top of screen
+	 * 
+	 * @param n
+	 * @param score
+	 */
 	
 	public void setPlayer2Name(String n,int score)
 	{
 		myName2.setText(n+ ": " + score);
 	}
 	
+	/**
+	 * updates the number of ties
+	 * 
+	 * @param ties
+	 */
+	
 	public void setTie(int ties)
 	{
 		myTies.setText("Ties: "+ ties);
 	}
+	/**
+	 * Set Message puts up to 3 strings in the JLabel at the bottom right
+	 *  each line corresponds to the correct line
+	 * 
+	 * @param line1
+	 * @param line2
+	 * @param line3
+	 */
 	
 	public void setMessage(String line1,String line2,String line3)
 	{
 		myLabel.setText(line1+ "\n"+line2+"\n"+line3);
 	}
 	
+	/** 
+	 * changes the image to the corresponding image
+	 * 
+	 * @param col
+	 * @param row
+	 * @param type
+	 */
 	public void changeImage(int col, int row, PieceType type)
     {
         if(type == null)
