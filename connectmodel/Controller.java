@@ -5,6 +5,9 @@ import javax.swing.JOptionPane;
 import connectmodel.View;
 
 /**
+ * Check Names
+ * Assign PieceTypes
+ * Create GameBoard
  * 
  * 
  * @author Andrew Tompkins
@@ -13,28 +16,42 @@ import connectmodel.View;
 
 public class Controller 
 {
-	private GameBoard myGameBoard;
-	private GameEngine myGameEngine;
+	private View myView;
 	private Player myPlayer;
 	private ComputerPlayer myComputerPlayer;
-	private PieceType[] myPieceType;
-	
-    public View myView;
-	
+	private GameBoard myGameBoard;
+	private GameEngine myGameEngine;
+	private PieceType myTypes[];
+	private String myPlayerName;
+		
 	public Controller()
     {
-        String firstName = null;
-
-		firstName = JOptionPane.showInputDialog("Enter Your Name");
-
         myView = new View(this);
-    	
-    	myGameBoard = new GameBoard(6, 7, 4, myPieceType);
-		myPlayer = new Player(firstName, PieceType.RED);
+		myTypes = new PieceType[2];
+		myTypes[0] = PieceType.RED;
+		myTypes[1] = PieceType.BLACK;
+		myComputerPlayer = new ComputerPlayer("PC", myTypes[1]);
+		myPlayer = new Player(JOptionPane.showInputDialog("Enter Your Name"), myTypes[1]);
+		this.setPlayerName(myPlayer.getName());
+    	myGameBoard = new GameBoard(6, 7, 4, myTypes);
+    	myGameEngine = new GameEngine(myPlayer, myGameBoard);
     }
 	
-	public void computerPlayer()
+	public String setPlayerName(String myName)
 	{
-		
+		myName = myPlayerName;
+		return myName;
+	}
+	
+	private void newGame()
+	{
+		myGameBoard.resetBoard();
+		for(int i = 0; i < 6; i++)
+		{
+			for(int j = 0; j < 7; j++)
+			{
+				myGameBoard.getBoard();
+			}
+		}
 	}
 }
