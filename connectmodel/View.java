@@ -1,31 +1,16 @@
-package connectmodel;
+package controllerandview;
 
-/**The View Class creates the board and arranges everything.
- * 
- * 
- * @author Andrew Tompkins
- */
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-
-import connectmodel.ButtonListener;
-import connectmodel.Controller;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class View extends JFrame 
+import connectmodel.PieceType;
+
+import java.awt.*;
+import java.lang.reflect.Method;
+
+public class View extends JFrame
 {
-	private JPanel myView = new JPanel();
-	private JPanel myNameGet = new JPanel();
-	//private Button myButtons[] = new Button[42];
-    private ButtonListener[][] mySquareListener;
-    private Controller myController;
-    private JButton[][] mySquare;
-    private Panel mySquaresPanel;
+	private int rows = 6;
+	private int cols = 7;
     private Panel myNames;
     private Panel myBottom;
 	private JLabel myName1 = new JLabel("Player1: ");
@@ -36,62 +21,116 @@ public class View extends JFrame
 	private ImageIcon my1Image;
 	private ImageIcon my2Image;
 	private ImageIcon myBlankImage;
-	private JTextField myOutput = new JTextField(10);
-	
+	private JPanel mySquarePanel;
+	private JLabel[][] mySquare;
+	private ButtonListener mySquareListener[][];
 	
 	public View(Controller controller)
 	{
 		this.setSize(600,600);
-		this.setResizable(false);
-		this.setLayout(new GridLayout(3, 1));
-		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		this.setBackground(Color.gray);
-		this.setLocationRelativeTo(null);
+		this.setLayout(null);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.associateListeners(controller);
+		getContentPane().setBackground(Color.white);
 		
+		my1Image = new ImageIcon("src/Images/pX.jpg");
+		my2Image = new ImageIcon("src/Images/pO.jpg");
+	    myBlankImage = new ImageIcon("src/Images/blank.jpg");
 		
-		File imageCheck = new File("src/Images/px.jpg");
-		
-		
-//		try{
-//			Image img = ImageIO.read(getClass().getResource("Images/pX.jpg"));
-		 my1Image = new ImageIcon("src/Images/pX.jpg");
-		 my2Image = new ImageIcon("src/Images/pO.jpg");
-	     myBlankImage = new ImageIcon("src/Images/blank.jpg");
-//		}
-		
-		myNames = new Panel(new GridLayout());
-		 myNames.add(myName1);
-		 myNames.add(myTies);
-		 myNames.add(myName2);
+		myNames = new Panel(new GridLayout(0,3));
+		myNames.setSize(600,100);
+		myNames.setLocation(new Point(0,0));
+		myNames.add(myName1);
+		myNames.add(myTies);
+		myNames.add(myName2);
 	     
-		 myBottom = new Panel();
-		 myReset.setPreferredSize(new Dimension(100, 100));
-		 myBottom.add(myReset);
-		 myBottom.add(myLabel);
-	     mySquareListener = new ButtonListener[6][7];
-	     mySquare = new JButton[6][7];
-	     mySquaresPanel = new Panel(new GridLayout(6,7));
-	     mySquaresPanel.setMinimumSize(new Dimension(300, 300));
-	     mySquaresPanel.setLocation(0,0);
+		myBottom = new Panel();
+		myBottom.setSize(500,100);
+		myBottom.setLocation(new Point(0,500));
+		myReset.setSize(100,100);
+		myBottom.add(myReset);
+		myBottom.add(myLabel);
+		
+		mySquarePanel = new JPanel(new GridLayout(6,7));
+	    mySquarePanel.setSize(300,300);
+	    mySquarePanel.setLocation(100,100);
+		
+		mySquare = new JLabel[rows][cols];
+		
+		for(int i = 0; i < rows; i++)
+		{
+			for(int j = 0; j < cols; j++)
+			{
+				mySquare[i][j] = new JLabel();
+				mySquare[i][j].addMouseListener(mySquareListener[i][j]);
+				mySquare[i][j].setBorder(BorderFactory.createLineBorder(Color.black));
+				mySquarePanel.add(mySquare[i][j]);
+			}
+		}
 		
 		
-	     for(int i=0; i < 6; i++)
-	        {
-	    	 for(int j=0; j < 7;j++)
-	    	 {
-	    		 mySquare[i][j] = new JButton(myBlankImage);
-	    		 mySquare[i][j].setIcon(myBlankImage);
-	    		 mySquare[i][j].setPreferredSize(new Dimension(50, 50));
-	    		 mySquare[i][j].setBackground(Color.DARK_GRAY);
-	    		 //System.out.println(mySquare[i][j].getBackground().toString());
-		         mySquaresPanel.add(mySquare[i][j]);
-	    	 }
-	        } 
-		 
-	     getContentPane().add(myNames);
-	     getContentPane().add(mySquaresPanel);
-	     getContentPane().add(myBottom);
-		setVisible(true);
+		getContentPane().add(myNames);
+		getContentPane().add(mySquarePanel);
+		getContentPane().add(myBottom);
+		
+		this.setVisible(true);
+	}
+
+	private void associateListeners(Controller controller) 
+	{
+		Class<? extends Controller> controllerClass;
+        Method tester;
+        Class<?>[] classArgs;
+
+        controllerClass = controller.getClass();
+        
+        tester = null;
+        classArgs = new Class[1];
+        
+        try
+        {
+           classArgs[0] = Class.forName("java.lang.Integer");
+        }
+        catch(ClassNotFoundException e)
+        {
+           String error;
+           error = e.toString();
+           System.out.println(error);
+        }
+        
+        
+        try
+        {
+           tester = controllerClass.getMethod("tester",classArgs);      
+        }
+        catch(NoSuchMethodException exception)
+        {
+           String error;
+
+           error = exception.toString();
+           System.out.println(error);
+        }
+        catch(SecurityException exception)
+        {
+           String error;
+
+           error = exception.toString();
+           System.out.println(error);
+        }
+        
+        int i,j;
+        Integer[] args;
+        mySquareListener = new ButtonListener[rows][cols];
+
+        for (i=0; i < rows; i++)
+        {
+        	for(j=0;j<cols;j++)
+        	{
+        		args = new Integer[1];
+                args[0] = new Integer(j);
+                mySquareListener[i][j] = new ButtonListener(controller, tester, args);
+        	}
+        }
 	}
 	
 	public void setPlayer1Name(String n, int score)
@@ -104,78 +143,30 @@ public class View extends JFrame
 		myName2.setText(n+ ": " + score);
 	}
 	
+	public void setTie(int ties)
+	{
+		myTies.setText("Ties: "+ ties);
+	}
+	
 	public void setMessage(String line1,String line2,String line3)
 	{
-		myLabel.setText(line1+ "/n"+line2+"/n"+line3);
+		myLabel.setText(line1+ "\n"+line2+"\n"+line3);
 	}
 	
-	public void addViewListener(ActionListener listenForInput)
-	{
-		{
-	        Class<? extends Controller> controllerClass;
-	        Class<?>[] classArgs;
-
-	        controllerClass = myController.getClass();
-	        
-	        classArgs = new Class[1];
-	        
-	        try
-	        {
-	           classArgs[0] = Class.forName("java.lang.Integer");
-	        }
-	        catch(ClassNotFoundException e)
-	        {
-	           String error;
-	           error = e.toString();
-	           System.out.println(error);
-	        }
-	        
-	        
-//	        try
-//	        {
-//	           //incrementMethod = controllerClass.getMethod("increment",classArgs);      
-//	        }
-//	       // catch(NoSuchMethodException exception)
-//	        {
-//	           String error;
-//
-//	           error = exception.toString();
-//	           System.out.println(error);
-//	        }
-	        catch(SecurityException exception)
-	        {
-	           String error;
-
-	           error = exception.toString();
-	           System.out.println(error);
-	        }
-	        
-	        int i;
-	        Integer[] args;
-
-	        for (i=0; i < 7; i++)
-	        {
-	           args = new Integer[1];
-	           args[0] = new Integer(i);
-	           //mySquare[i].addMouseListener(mySquareListener[i]);
-
-	        }
-	    }
-	}
-	
-    public void changeImage(int col, int row, int type)
+	public void changeImage(int col, int row, PieceType type)
     {
-        if(type == 0)
+        if(type == null)
         {
         	mySquare[col][row].setIcon(myBlankImage);
         }
-        else if(type == 1)
+        else if(type == PieceType.RED)
         {
         	mySquare[col][row].setIcon(my1Image);
         }
-        else if(type == 2)
+        else if(type == PieceType.BLACK)
         {
         	mySquare[col][row].setIcon(my2Image);
         }  
     }
 }
+
